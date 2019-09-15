@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.valdomiro.curso.dto.UserDTO;
+import com.valdomiro.curso.dto.UserInsertDTO;
 import com.valdomiro.curso.entities.User;
 import com.valdomiro.curso.repositories.UserRepository;
 import com.valdomiro.curso.services.exceptions.DatabaseException;
@@ -33,8 +34,11 @@ public class UserService {
 		User entity= obj.orElseThrow(() -> new ResourceNotFoundException(id));
 		return new UserDTO(entity);
 	}
-	public User insert(User obj) {
-		return repository.save(obj);
+	public UserDTO insert(UserInsertDTO dto) {
+		User entity= dto.toEntity();
+		entity= repository.save(entity);
+		
+		return new UserDTO(entity);
 	}
 	public void delete(Long id) {
 		try {
