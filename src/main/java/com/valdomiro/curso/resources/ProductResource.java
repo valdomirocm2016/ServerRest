@@ -1,15 +1,22 @@
 package com.valdomiro.curso.resources;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.valdomiro.curso.dto.ProductCategoriesDTO;
 import com.valdomiro.curso.dto.ProductDTO;
+import com.valdomiro.curso.dto.UserDTO;
+import com.valdomiro.curso.dto.UserInsertDTO;
 import com.valdomiro.curso.entities.Product;
 import com.valdomiro.curso.services.ProductService;
 
@@ -32,5 +39,13 @@ public class ProductResource {
 		ProductDTO dto= service.findById(id);
 		return ResponseEntity.ok().body(dto);
 		
+	}
+	
+	@PostMapping
+	public ResponseEntity<ProductDTO> insert(@RequestBody ProductCategoriesDTO dto){
+		
+		ProductDTO newDto= service.insert(dto);
+		URI uri= ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newDto.getId()).toUri();
+		return ResponseEntity.created(uri).body(newDto);
 	}
 }
