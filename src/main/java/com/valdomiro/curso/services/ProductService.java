@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import com.valdomiro.curso.entities.Category;
 import com.valdomiro.curso.entities.Product;
 import com.valdomiro.curso.repositories.CategoryRepository;
 import com.valdomiro.curso.repositories.ProductRepository;
+import com.valdomiro.curso.services.exceptions.DatabaseException;
 import com.valdomiro.curso.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -53,6 +56,7 @@ public class ProductService {
 	}
 	
 	
+	
 	@Transactional
 	public ProductDTO update(Long id, ProductCategoriesDTO dto) {
 		try {
@@ -66,6 +70,17 @@ public class ProductService {
 		}
 		
 	
+	}
+	public void delete(Long id) {
+		try {
+		repository.deleteById(id);
+		}catch(EmptyResultDataAccessException e) {
+			
+			throw new ResourceNotFoundException(id);
+		
+		}catch(DataIntegrityViolationException ex){
+			throw new DatabaseException(ex.getMessage());
+		}
 	}
 	private void updateData(Product entity, ProductCategoriesDTO dto) {
 		// TODO Auto-generated method stub
