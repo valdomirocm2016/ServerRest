@@ -15,6 +15,7 @@ import com.valdomiro.curso.entities.Order;
 import com.valdomiro.curso.entities.OrderItem;
 import com.valdomiro.curso.entities.User;
 import com.valdomiro.curso.repositories.OrderRepository;
+import com.valdomiro.curso.repositories.UserRepository;
 import com.valdomiro.curso.services.exceptions.ResourceNotFoundException;
 
 
@@ -26,6 +27,9 @@ public class OrderService {
 	
 	@Autowired
 	private AuthService authService;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	public List<OrderDTO> findAll(){
 		List<Order> list= repository.findAll();
@@ -55,6 +59,14 @@ public class OrderService {
 		Set<OrderItem> set = order.getItens();
 		
 		return set.stream().map(e -> new OrderItemDTO(e)).collect(Collectors.toList());
+	}
+	
+	@Transactional(readOnly=true)
+	public List<OrderDTO> findByClientId(Long clientId) {
+		User client= userRepository.getOne(clientId);
+		List<Order> list= repository.findByClient(client);
+		
+		return list.stream().map(e -> new OrderDTO(e)).collect(Collectors.toList());
 	}
 
 }
