@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.valdomiro.curso.dto.CategoryDTO;
 import com.valdomiro.curso.dto.ProductCategoriesDTO;
 import com.valdomiro.curso.dto.ProductDTO;
 import com.valdomiro.curso.services.ProductService;
@@ -93,4 +94,29 @@ public class ProductResource {
 		return ResponseEntity.noContent().build();
 		
 	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PutMapping(value="/{id}/addcategory")
+	public ResponseEntity<Void> addCategory(@PathVariable Long id, @RequestBody CategoryDTO dto){
+		service.addCategory(id, dto);
+		return ResponseEntity.noContent().build();
+		
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PutMapping(value="/{id}/removecategory")
+	public ResponseEntity<Void> removeCategory(@PathVariable Long id, @RequestBody CategoryDTO dto){
+		service.removeCategory(id, dto);
+		return ResponseEntity.noContent().build();
+		
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PutMapping(value="/{id}/setcategories")
+	public ResponseEntity<Void> setCategories(@PathVariable Long id, @RequestBody List<CategoryDTO> dto){
+		service.setCategories(id, dto);
+		return ResponseEntity.noContent().build();
+		
+	}
+	
 }
