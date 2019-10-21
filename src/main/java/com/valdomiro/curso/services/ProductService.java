@@ -1,7 +1,9 @@
 package com.valdomiro.curso.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -22,6 +24,7 @@ import com.valdomiro.curso.entities.Product;
 import com.valdomiro.curso.repositories.CategoryRepository;
 import com.valdomiro.curso.repositories.ProductRepository;
 import com.valdomiro.curso.services.exceptions.DatabaseException;
+import com.valdomiro.curso.services.exceptions.ParamFormatException;
 import com.valdomiro.curso.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -34,9 +37,31 @@ public class ProductService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 	
-	public Page<ProductDTO> findAllPaged(Pageable pageable){
-		Page<Product> list= repository.findAll(pageable);
+	public Page<ProductDTO> findByNameCategoryPaged(String name,String categoriesStr,Pageable pageable){
+		Page<Product> list;
+		
+		if(categoriesStr.equals("")) {
+			 list= repository.findByNameContainingIgnoreCase(name, pageable);
+			
+		}else {
+			List<Long> ids= parseIds(categoriesStr);
+			List<Category> categories= ids.stream().map(id-> categoryRepository.getOne(id)).collect(Collectors.toList());
+			
+		     list= repository.findByNameContainingIgnoreCaseAndCategoriesIn(name, categories, pageable);	
+		}
 		return list.map(e -> new ProductDTO(e));
+	}
+	private List<Long> parseIds(String categoriesStr) {
+		String[] idsArray=categoriesStr.split(",");
+		List<Long> list= new ArrayList<>();
+		for(String it:idsArray) {
+			try {
+				list.add(Long.parseLong(it));
+			}catch(NumberFormatException e) {
+				throw new ParamFormatException("Invalid categories format");
+			}
+		}
+		return list;
 	}
 	/*public Product findById(Long id) {
 		Optional<Product> obj= repository.findById(id);
