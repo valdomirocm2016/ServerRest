@@ -25,6 +25,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.valdomiro.curso.dto.CategoryDTO;
 import com.valdomiro.curso.dto.ProductCategoriesDTO;
 import com.valdomiro.curso.dto.ProductDTO;
+import com.valdomiro.curso.dto.UserDTO;
 import com.valdomiro.curso.services.ProductService;
 
 
@@ -34,6 +35,13 @@ public class ProductResource {
 	
 	@Autowired
 	private ProductService service;
+	
+	/*novo metodo de adptacao*/
+	@GetMapping(value="/list")
+	public ResponseEntity<List<ProductDTO>> findAll(){
+		List<ProductDTO> list= service.findAll();
+		return ResponseEntity.ok().body(list);
+	}
    
 	@GetMapping
 	public ResponseEntity<Page<ProductDTO>> findAllPaged(

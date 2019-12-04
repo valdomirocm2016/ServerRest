@@ -19,8 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.valdomiro.curso.dto.CategoryDTO;
 import com.valdomiro.curso.dto.ProductCategoriesDTO;
 import com.valdomiro.curso.dto.ProductDTO;
+import com.valdomiro.curso.dto.UserDTO;
 import com.valdomiro.curso.entities.Category;
 import com.valdomiro.curso.entities.Product;
+import com.valdomiro.curso.entities.User;
 import com.valdomiro.curso.repositories.CategoryRepository;
 import com.valdomiro.curso.repositories.ProductRepository;
 import com.valdomiro.curso.services.exceptions.DatabaseException;
@@ -36,6 +38,12 @@ public class ProductService {
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
+	
+	/*novo metodo de adptação*/
+	public List<ProductDTO> findAll(){
+		List<Product> list= repository.findAll();
+		return list.stream().map(e -> new ProductDTO(e)).collect(Collectors.toList());
+	}
 	
 	public Page<ProductDTO> findByNameCategoryPaged(String name,String categoriesStr,Pageable pageable){
 		Page<Product> list;
